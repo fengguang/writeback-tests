@@ -6,6 +6,7 @@ umask 002
 cd $(dirname $0)
 BASE_DIR=$(pwd)
 PATH=$PATH:$BASE_DIR
+cd -
 
 plot_dir() {
 	pushd $1 || return
