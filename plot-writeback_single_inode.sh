@@ -1,0 +1,88 @@
+#!/bin/sh
+
+for dir
+do
+
+# writeback_single_inode: bdi 0:21: ino=7307423 state=I_DIRTY_DATASYNC dirtied_when=xxx age=0 wrote=460 nr_to_write=14862
+#                                       2                                  3		4       5               6
+
+plot_inode() {
+data=$1
+suffix=$2
+gnuplot <<EOF
+set xlabel "time (s)"
+
+set size 1
+set terminal pngcairo size ${width:-1280}, 800
+set terminal pngcairo size ${width:-1000}, 600
+set terminal pngcairo size ${width:-1280}, ${height:-800}
+
+set output "writeback_single_inode$suffix.png"
+set ylabel "size (MB)"
+set y2label "time (s)"
+set ytics nomirror
+set y2tics
+plot "$data" using 1:(\$7/256)  axis x1y1 with      points pt 5 ps 0.6 title "wrote", \
+     "$data" using 1:4 axis x1y2 with      points pt 1 ps 0.6 title "age"
+EOF
+}
+
+plot() {
+data=$1
+suffix=$2
+gnuplot <<EOF
+set xlabel "time (s)"
+
+set size 1
+set terminal pngcairo size ${width:-1280}, 800
+set terminal pngcairo size ${width:-1000}, 600
+set terminal pngcairo size ${width:-1280}, ${height:-800}
+
+set output "writeback_single_inode$suffix.png"
+set ylabel "size (MB)"
+plot "$data" using 1:(\$6/256) with linespoints pt 4 ps 0.6 lc rgbcolor "green" title "nr_to_write", \
+     "$data" using 1:(\$7/256) with      points pt 5 ps 0.6 lc rgbcolor "red"   title "wrote"
+EOF
+}
+
+cd $dir
+
+[[ -f trace || -f trace.bz2 ]] || exit
+
+trace=trace-writeback_single_inode
+
+# ino=$(cat trace | awk '/writeback_single_inode.*I_DIRTY/{if ($6 == "0:15:") continue; print $7; exit}')
+ino=$(head -1 ls-files | cut -f1 -d' ')
+[[ -n $ino ]] || exit
+bzcat trace.bz2 | grep -F "ino=$ino " |\
+	grep writeback_single_inode |\
+	grep -v 9223372036854 |\
+	sed 's/.*\]//' |\
+	sed 's/bdi.[^ ]\+//' |\
+	sed 's/[^0-9.-]\+/ /g'  > $trace-ino=$ino
+
+plot_inode	$trace-ino=$ino -ino=$ino
+
+bzcat trace.bz2 | grep -F "writeback_single_inode" |\
+	grep -v 9223372036854 |\
+	sed 's/.*\]//' |\
+	sed 's/bdi.[^ ]\+//' |\
+	sed 's/[^0-9.-]\+/ /g'  > $trace
+
+plot 		$trace
+
+# lines=$(wc -l $trace | cut -f1 -d' ')
+# if [[ $lines -ge 300 ]]; then
+# 	old_width=$width
+# 	width=8000
+# 	plot $trace +
+# 	width=$old_width
+# fi
+
+# tail -n 300 < $trace > $trace-300
+# plot 		$trace-300 -300
+
+rm $trace*
+
+cd -
+done
