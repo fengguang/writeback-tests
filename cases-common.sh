@@ -20,7 +20,7 @@ fio_job() {
 	run_test fio
 }
 
-jbod_12hdd_mmap_randwrite() {
+jbod_12hdd() {
 
 	devices="
 	/dev/sdb1 /dev/sdb2
@@ -37,11 +37,17 @@ jbod_12hdd_mmap_randwrite() {
 	/dev/sdm1 /dev/sdm2
 	"
 
-	fio_job fio_jbod_12hdd_mmap_randwrite_$1
+	fio_job fio_jbod_12hdd_$1
 }
 
-jbod_12hdd_mmap_randwrite_4k()	{ jbod_12hdd_mmap_randwrite 4k; }
-jbod_12hdd_mmap_randwrite_64k()	{ jbod_12hdd_mmap_randwrite 64k; }
+jbod_12hdd_mmap_randwrite_4k()	{ jbod_12hdd mmap_randwrite_4k;	}
+jbod_12hdd_mmap_randwrite_64k()	{ jbod_12hdd mmap_randwrite_64k;}
+jbod_12hdd_mmap_randrw_4k()	{ jbod_12hdd mmap_randrw_4k;	}
+jbod_12hdd_mmap_randrw_64k()	{ jbod_12hdd mmap_randrw_64k;	}
+jbod_12hdd_randwrite_4k()	{ jbod_12hdd randwrite_4k;	}
+jbod_12hdd_randwrite_64k()	{ jbod_12hdd randwrite_64k;	}
+jbod_12hdd_randrw_4k()		{ jbod_12hdd randrw_4k;		}
+jbod_12hdd_randrw_64k()		{ jbod_12hdd randrw_64k;	}
 
 dd_job() {
 	job=${nr_dd}dd

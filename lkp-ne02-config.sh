@@ -24,6 +24,12 @@ test_cases() {
 
 	echo jbod_12hdd_mmap_randwrite_4k
 	echo jbod_12hdd_mmap_randwrite_64k
+	echo jbod_12hdd_randwrite_64k
+	echo jbod_12hdd_randwrite_4k
+	echo jbod_12hdd_mmap_randrw_64k
+	echo jbod_12hdd_mmap_randrw_4k
+	# echo jbod_12hdd_randrw_64k
+	# echo jbod_12hdd_randrw_4k
 
 	echo jbod_10hdd_thresh_100m
 	echo jbod_10hdd_thresh_1000m
