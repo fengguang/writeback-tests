@@ -48,6 +48,8 @@ jbod_12hdd_randwrite_4k()	{ jbod_12hdd randwrite_4k;	}
 jbod_12hdd_randwrite_64k()	{ jbod_12hdd randwrite_64k;	}
 jbod_12hdd_randrw_4k()		{ jbod_12hdd randrw_4k;		}
 jbod_12hdd_randrw_64k()		{ jbod_12hdd randrw_64k;	}
+jbod_12hdd_fallocate_randwrite_4k()	{ jbod_12hdd fallocate_randwrite_4k;	}
+jbod_12hdd_fallocate_randwrite_64k()	{ jbod_12hdd fallocate_randwrite_64k;	}
 
 dd_job() {
 	job=${nr_dd}dd
