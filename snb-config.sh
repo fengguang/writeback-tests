@@ -1,7 +1,7 @@
 
 DEVICES="/dev/sda7"
 
-FILESYSTEMS="xfs ext4 ext3 btrfs"
+FILESYSTEMS="xfs ext4 ext3 ext3:jsize=8 btrfs"
 DD_TASKS="1 10 100"
 # FILESYSTEMS="xfs"
 # DD_TASKS="1 2 3"
