@@ -37,19 +37,53 @@ jbod_12hdd() {
 	/dev/sdm1 /dev/sdm2
 	"
 
-	fio_job fio_jbod_12hdd_$1
+	local rw=$1
+	local ioengine=$2
+	local fallocate=$3
+	local blocksize=$4
+
+	job=fio_jbod_12hdd_${rw}_${ioengine}_${fallocate}_${blocksize}
+
+	make_dir jbod_12hdd $job || return
+
+	cat > $job <<EOF
+[global]
+runtime=$RUNTIME
+rw=$rw
+direct=0
+ioengine=$ioengine
+size=8G
+blocksize=$blocksize
+numjobs=1
+fallocate=$fallocate
+overwrite=0
+create_sparse=1
+invalidate=0
+directory=$MNT
+file_service_type=random:36
+
+$(<$BASE_DIR/fio_jbod_12hdd_template)
+EOF
+	run_test fio
 }
 
-jbod_12hdd_mmap_randwrite_4k()	{ jbod_12hdd mmap_randwrite_4k;	}
-jbod_12hdd_mmap_randwrite_64k()	{ jbod_12hdd mmap_randwrite_64k;}
-jbod_12hdd_mmap_randrw_4k()	{ jbod_12hdd mmap_randrw_4k;	}
-jbod_12hdd_mmap_randrw_64k()	{ jbod_12hdd mmap_randrw_64k;	}
-jbod_12hdd_randwrite_4k()	{ jbod_12hdd randwrite_4k;	}
-jbod_12hdd_randwrite_64k()	{ jbod_12hdd randwrite_64k;	}
-jbod_12hdd_randrw_4k()		{ jbod_12hdd randrw_4k;		}
-jbod_12hdd_randrw_64k()		{ jbod_12hdd randrw_64k;	}
-jbod_12hdd_fallocate_randwrite_4k()	{ jbod_12hdd fallocate_randwrite_4k;	}
-jbod_12hdd_fallocate_randwrite_64k()	{ jbod_12hdd fallocate_randwrite_64k;	}
+jbod_12hdd_randrw_4k()				{ jbod_12hdd randrw	sync	0	  4k;	}
+jbod_12hdd_randrw_64k()				{ jbod_12hdd randrw	sync	0	 64k;	}
+jbod_12hdd_randwrite_4k()			{ jbod_12hdd randwrite	sync	0	  4k;	}
+jbod_12hdd_randwrite_64k()			{ jbod_12hdd randwrite	sync	0	 64k;	}
+jbod_12hdd_mmap_randrw_4k()			{ jbod_12hdd randrw	mmap	0	  4k;	}
+jbod_12hdd_mmap_randrw_64k()			{ jbod_12hdd randrw	mmap	0	 64k;	}
+jbod_12hdd_mmap_randwrite_4k()			{ jbod_12hdd randwrite	mmap	0	  4k;	}
+jbod_12hdd_mmap_randwrite_64k()			{ jbod_12hdd randwrite	mmap	0	 64k;	}
+jbod_12hdd_fallocate_randrw_4k()		{ jbod_12hdd randrw	sync	1	  4k;	}
+jbod_12hdd_fallocate_randrw_64k()		{ jbod_12hdd randrw	sync	1	 64k;	}
+jbod_12hdd_fallocate_randwrite_4k()		{ jbod_12hdd randwrite	sync	1	  4k;	}
+jbod_12hdd_fallocate_randwrite_64k()		{ jbod_12hdd randwrite	sync	1	 64k;	}
+jbod_12hdd_fallocate_mmap_randrw_4k()		{ jbod_12hdd randrw	mmap	1	  4k;	}
+jbod_12hdd_fallocate_mmap_randrw_64k()		{ jbod_12hdd randrw	mmap	1	 64k;	}
+jbod_12hdd_fallocate_mmap_randwrite_4k()	{ jbod_12hdd randwrite	mmap	1	  4k;	}
+jbod_12hdd_fallocate_mmap_randwrite_64k()	{ jbod_12hdd randwrite	mmap	1	 64k;	}
+
 
 dd_job() {
 	job=${nr_dd}dd
