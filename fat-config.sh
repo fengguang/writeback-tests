@@ -16,6 +16,8 @@ DD_TASKS="1 10 100"
 test_cases() {
 	echo
 	echo ukey_hdd
+	echo thresh_1000m_999m
+	echo thresh_1000m_990m
 	echo thresh_1000m
 	echo thresh_100m
 	echo thresh_10m

@@ -94,28 +94,42 @@ ukey_hdd() {
 }
 
 thresh() {
-	dirty_thresh=$1
-	unit=$2
-	ndisk=${3:-1}
-	array=${4:-JBOD}
-	[[ $2 = M ]] && bits=20
-	[[ $2 = G ]] && bits=30
+	local dirty_thresh=$1
+	local unit=$2
+	local ndisk=${3:-1}
+	local array=${4:-JBOD}
 
+	local bits output_dir bg_dirty_thresh bg_name
+
+	[[ $dirty_thresh =~ : ]] && {
+		bg_dirty_thresh=${dirty_thresh##*:}
+		dirty_thresh=${dirty_thresh%%:*}
+		bg_name=":${bg_dirty_thresh}${unit}"
+	}
+
+	# not meaningful to run too many dd's for NFS and low memory system
 	[[ $nr_dd -gt 10 && $fstype = nfs ]] && return
-	[[ $nr_dd -gt 10 && $1 -lt 100 && $2 = M ]] && return
+	[[ $nr_dd -gt 10 && $dirty_thresh -lt 100 && $unit = M ]] && return
 
+	# in case the test box has more devices than necessary for current case
 	devices=$(echo $DEVICES | cut -f-$ndisk -d' ')
 	ndisk=$(echo $devices | wc -w)
 
 	if (( $ndisk == 1 )); then
-		output_dir="thresh=${dirty_thresh}${unit}"
+		output_dir="thresh=${dirty_thresh}${unit}${bg_name}"
 	else
 		: ${STORAGE=HDD}
-		output_dir="$array-${ndisk}${STORAGE}-thresh=${dirty_thresh}${unit}"
+		output_dir="$array-${ndisk}${STORAGE}-thresh=${dirty_thresh}${unit}${bg_name}"
 	fi
 
 	make_dir $output_dir $(dd_job) || return
 
+	[[ $2 = M ]] && bits=20
+	[[ $2 = G ]] && bits=30
+
+	[[ $bg_dirty_thresh ]] && {
+	echo $((bg_dirty_thresh<<bits)) > /proc/sys/vm/dirty_background_bytes
+	}
 	echo $((dirty_thresh<<bits)) > /proc/sys/vm/dirty_bytes
 
 	run_test dd
@@ -135,6 +149,9 @@ thresh_1g()	{ thresh 1    G; }
 thresh_10g()	{ thresh 10   G; }
 thresh_100g()	{ thresh 100  G; }
 thresh_1000g()	{ thresh 1000 G; }
+
+thresh_1000m_999m()	{ thresh 1000:999 M; }
+thresh_1000m_990m()	{ thresh 1000:990 M; }
 
 jbod_10hdd_thresh_1m()		{ thresh 1    M 10; }
 jbod_10hdd_thresh_10m()		{ thresh 10   M 10; }
