@@ -1,7 +1,11 @@
 #!/bin/bash
 
 run_fio() {
-	fio $BASE_DIR/$job 2>&1 > fio.log &
+	local job_file=$job
+	[[ -f $job_file ]] || job_file=../$job
+	[[ -f $job_file ]] || job_file=$BASE_DIR/$job
+
+	fio $job_file 2>&1 > fio.log &
 	pid=$!
 
 	sleep 10
