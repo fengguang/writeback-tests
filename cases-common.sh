@@ -13,10 +13,7 @@ make_dir() {
 
 fio_job() {
 	job=$1
-	output_dir=$job
-	output_dir=${output_dir##fio_}
-	output_dir=${output_dir##$(hostname)_}
-	make_dir $output_dir $job || return
+	make_dir fio $job || return
 	run_test fio
 }
 
