@@ -101,7 +101,7 @@ process_iostat() {
 	grep -A1 avg-cpu iostat | grep -F . | tail -n $((lines*2/3)) | avg.rb >> $avg
 	echo >> $avg
 	echo "Device:         rrqm/s   wrqm/s     r/s     w/s    rkB/s    wkB/s avgrq-sz avgqu-sz   await  svctm  %util" >> $avg
-	grep $IOSTAT_DISK iostat | tail -n $((lines*2/3)) | avg.rb >> $avg
+	grep ${IOSTAT_DISK:-sda} iostat | tail -n $((lines*2/3)) | avg.rb >> $avg
 
 	grep -A1 avg-cpu iostat | grep -v '[a-z-]' > iostat-cpu
 	grep ${IOSTAT_DISK:-sda} iostat > iostat-disk

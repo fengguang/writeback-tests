@@ -26,6 +26,8 @@ do
 for scheme in $(test_cases)
 do
 	devices=$DEVICES
+	[[ $fs =~ nfs ]] && devices=$NFS_DEVICE
+
 	if [[ $scheme =~ ^fio_ && -f $scheme ]]; then
 		fio_job $scheme
 	else

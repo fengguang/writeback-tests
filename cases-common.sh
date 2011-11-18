@@ -112,7 +112,7 @@ thresh() {
 	[[ $nr_dd -gt 10 && $dirty_thresh -lt 100 && $unit = M ]] && return
 
 	# in case the test box has more devices than necessary for current case
-	devices=$(echo $DEVICES | cut -f-$ndisk -d' ')
+	devices=$(echo $devices | cut -f-$ndisk -d' ')
 	ndisk=$(echo $devices | wc -w)
 
 	if (( $ndisk == 1 )); then
@@ -131,6 +131,10 @@ thresh() {
 	echo $((bg_dirty_thresh<<bits)) > /proc/sys/vm/dirty_background_bytes
 	}
 	echo $((dirty_thresh<<bits)) > /proc/sys/vm/dirty_bytes
+
+	[[ $fstype = nfs ]] && {
+	echo $((dirty_thresh<<(bits - 13))) > /proc/sys/fs/nfs/nfs_congestion_kb
+	}
 
 	run_test dd
 }
