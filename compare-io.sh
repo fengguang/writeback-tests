@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 IO_EXPRESSIONS=(
 write_bw

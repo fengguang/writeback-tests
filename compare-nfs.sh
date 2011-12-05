@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 NFS_EXPRESSIONS=(
 write_bw
