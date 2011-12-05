@@ -1,0 +1,25 @@
+#!/bin/sh
+
+NFS_EXPRESSIONS=(
+write_bw
+
+nfs_nr_commits 
+nfs_nr_writes 
+
+nfs_commit_size 
+nfs_write_size 
+
+nfs_write_queue_time 
+nfs_write_rtt_time 
+nfs_write_execute_time 
+
+nfs_commit_queue_time 
+nfs_commit_rtt_time 
+nfs_commit_execute_time 
+)
+
+for e in ${NFS_EXPRESSIONS[*]}
+do
+	./compare.rb -e $e "$@"
+	echo
+done
