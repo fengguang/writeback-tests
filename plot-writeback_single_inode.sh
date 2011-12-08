@@ -52,7 +52,7 @@ cd $dir
 trace=trace-writeback_single_inode
 
 # ino=$(cat trace | awk '/writeback_single_inode.*I_DIRTY/{if ($6 == "0:15:") continue; print $7; exit}')
-ino=$(head -1 ls-files | cut -f1 -d' ')
+ino=$(awk '{print $1; exit}' ls-files)
 [[ -n $ino ]] || exit
 bzcat trace.bz2 | grep -F "ino=$ino " |\
 	grep writeback_single_inode |\
