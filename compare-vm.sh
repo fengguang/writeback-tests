@@ -1,0 +1,106 @@
+#!/bin/bash
+
+VM_EXPRESSIONS=(
+write_bw
+
+# nr_free_pages
+# nr_inactive_anon
+# nr_active_anon
+# nr_inactive_file
+# nr_active_file
+# nr_unevictable
+# nr_mlock
+# nr_anon_pages
+# nr_mapped
+# nr_file_pages
+# nr_dirty
+# nr_writeback
+# nr_slab_reclaimable
+# nr_slab_unreclaimable
+# nr_page_table_pages
+# nr_kernel_stack
+# nr_unstable
+# nr_bounce
+
+nr_vmscan_write
+nr_vmscan_immediate_reclaim
+
+# nr_writeback_temp
+# nr_isolated_anon
+# nr_isolated_file
+# nr_shmem
+
+nr_dirtied
+nr_written
+
+numa_hit
+numa_miss
+numa_foreign
+numa_interleave
+numa_local
+numa_other
+
+# nr_anon_transparent_hugepages
+# nr_dirty_threshold
+# nr_dirty_background_threshold
+
+pgpgin
+pgpgout
+pswpin
+pswpout
+
+pgalloc_dma
+pgalloc_dma32
+pgalloc_normal
+pgalloc_movable
+pgfree
+pgactivate
+pgdeactivate
+pgfault
+pgmajfault
+pgrefill_dma
+pgrefill_dma32
+pgrefill_normal
+pgrefill_movable
+pgsteal_dma
+pgsteal_dma32
+pgsteal_normal
+pgsteal_movable
+pgscan_kswapd_dma
+pgscan_kswapd_dma32
+pgscan_kswapd_normal
+pgscan_kswapd_movable
+pgscan_direct_dma
+pgscan_direct_dma32
+pgscan_direct_normal
+pgscan_direct_movable
+zone_reclaim_failed
+pginodesteal
+slabs_scanned
+kswapd_steal
+kswapd_inodesteal
+kswapd_low_wmark_hit_quickly
+kswapd_high_wmark_hit_quickly
+kswapd_skip_congestion_wait
+pageoutrun
+allocstall
+pgrotated
+
+# htlb_buddy_alloc_success
+# htlb_buddy_alloc_fail
+
+# unevictable_pgs_culled
+# unevictable_pgs_scanned
+# unevictable_pgs_rescued
+# unevictable_pgs_mlocked
+# unevictable_pgs_munlocked
+# unevictable_pgs_cleared
+# unevictable_pgs_stranded
+# unevictable_pgs_mlockfreed
+)
+
+for e in ${VM_EXPRESSIONS[*]}
+do
+	./compare.rb -e $e "$@"
+	echo
+done
