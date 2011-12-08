@@ -44,8 +44,10 @@ plot "$disk" using 12 with linespoints pt 5 ps 0.6 title "disk util", \
      "$cpu" using 5 with linespoints pt 4 ps 0.6 title "steal", \
      "$cpu" using 6 with linespoints pt 4 ps 0.6 title "idle"
 
-set output "iostat-misc$suffix.png"
 unset ylabel
+set yrange [*:*]
+
+set output "iostat-misc$suffix.png"
 set ytics nomirror
 set y2label "time"
 set y2tics
