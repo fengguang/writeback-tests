@@ -88,18 +88,13 @@ dd_job() {
 	echo $job
 }
 
-ukey_hdd() {
-	make_dir UKEY-HDD $(dd_job) || return
-	run_test dd
-}
-
 thresh() {
 	local dirty_thresh=$1
 	local unit=$2
 	local ndisk=${3:-1}
 	local array=${4:-JBOD}
 
-	local bits output_dir bg_dirty_thresh bg_name
+	local bits output_dir bg_dirty_thresh bg_name storage_prefix
 
 	[[ $dirty_thresh =~ : ]] && {
 		bg_dirty_thresh=${dirty_thresh##*:}
@@ -116,16 +111,16 @@ thresh() {
 	ndisk=$(echo $devices | wc -w)
 
 	if (( $ndisk == 1 )); then
-		output_dir="thresh=${dirty_thresh}${unit}${bg_name}"
+		[[ $storage != HDD ]] && storage_prefix=$storage-
+		output_dir="${storage_prefix}thresh=${dirty_thresh}${unit}${bg_name}"
 	else
-		: ${STORAGE=HDD}
-		output_dir="$array-${ndisk}${STORAGE}-thresh=${dirty_thresh}${unit}${bg_name}"
+		output_dir="$array-${ndisk}${storage}-thresh=${dirty_thresh}${unit}${bg_name}"
 	fi
 
 	make_dir $output_dir $(dd_job) || return
 
-	[[ $2 = M ]] && bits=20
-	[[ $2 = G ]] && bits=30
+	[[ $unit = M || $unit = m ]] && bits=20
+	[[ $unit = G || $unit = g ]] && bits=30
 
 	[[ $bg_dirty_thresh ]] && {
 	echo $((bg_dirty_thresh<<bits)) > /proc/sys/vm/dirty_background_bytes

@@ -25,6 +25,7 @@ for fs in ${FILESYSTEMS:-ext4}
 do
 for scheme in $(test_cases)
 do
+	storage=${STORAGE:-HDD}
 	devices=$DEVICES
 	[[ $fs =~ nfs ]] && devices=$NFS_DEVICE
 
