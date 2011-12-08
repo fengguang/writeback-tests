@@ -5,11 +5,9 @@ run_fio() {
 	[[ -f $job_file ]] || job_file=../$job
 	[[ -f $job_file ]] || job_file=$BASE_DIR/$job
 
+	# --debug=io,file 
 	fio $job_file 2>&1 > fio.log &
 	pid=$!
-
-	sleep 10
-	pidof fio > pid
 
 	(sleep 3600 && killall fio)&
 	# echo t > /proc/sysrq-trigger
