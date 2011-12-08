@@ -63,7 +63,7 @@ make_fs() {
 		echo mkfs -t $fstype $mkfsopt $dev
 		mkfs -t $fstype $mkfsopt $dev &
 	done
-	wait
+	wait || exit
 }
 
 mount_fs() {
@@ -72,6 +72,6 @@ mount_fs() {
 		mnt=$MNT/$(basename $dev)
 		mkdir -p $mnt
 		echo mount -t $fstype $mntopt $dev $mnt
-		mount -t $fstype $mntopt $dev $mnt
+		mount -t $fstype $mntopt $dev $mnt || exit
 	done
 }
