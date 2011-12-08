@@ -74,11 +74,12 @@ cd $dir
 
 trace=trace-balance_dirty_pages
 
-bzcat trace.bz2 | grep -F balance_dirty_pages | awk '/(dd|tar|fio)-[0-9]+/{print $1; exit}'| sed 's/[^0-9]//g' > more-pid
+bzcat trace.bz2 | grep -F balance_dirty_pages | awk '/(dd|tar|fio)-[0-9]+/{print $1; exit}'| sed 's/[^0-9]//g' > fio-pid
+bzcat trace.bz2 | grep -F balance_dirty_pages | awk '/<...>-[0-9]+/{print $1; exit}'| sed 's/[^0-9]//g' > more-pid
 
 # dd=$(cat pid | cut -f1 -d' ')
 # [[ -n "$dd" ]] || exit
-for dd in $(cat more-pid pid)
+for dd in $(cat pid fio-pid more-pid)
 do
 	bzcat trace.bz2 |\
 		grep -- "-$dd \+\[" |\
