@@ -226,7 +226,7 @@ def add_dd(path)
 	else
 		$cases[key][ckey] = bw
 	end
-	# print "#{fs}-#{job}-#{bw}\n"
+	# print "#{fs}-#{job}-#{run}-#{kernel}-#{bw}\n"
 end
 
 ARGV.each { |path|
@@ -265,7 +265,7 @@ $cases.sort.each { |key, value|
 
 bw0 = $sum[0]
 $sum.each_with_index { |bw, i|
-	if i == 0
+	if i == 0 || bw0 == 0
 		printf "%24.2f  ", bw
 	else
 		printf "%+10.1f%% %12.2f  ", 100.0 * (bw - bw0) / bw0, bw
