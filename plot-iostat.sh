@@ -32,15 +32,6 @@ plot "$disk" using (\$7/1024) with linespoints pt 5 title "write MB/s", \
 
 unset grid
 
-set output "iostat-misc$suffix.png"
-unset ylabel
-plot "$disk" using  4 with linespoints title "r/s", \
-     "$disk" using  5 with linespoints title "w/s", \
-     "$disk" using  8 with linespoints title "avgrq-sz", \
-     "$disk" using  9 with linespoints title "avgqu-sz", \
-     "$disk" using 10 with linespoints title "await", \
-     "$disk" using 11 with linespoints title "svctm"
-
 set output "iostat-util$suffix.png"
 set ylabel "percent"
 set yrange [0:100]
@@ -52,6 +43,18 @@ plot "$disk" using 12 with linespoints pt 5 ps 0.6 title "disk util", \
      "$cpu" using 4 with linespoints pt 4 ps 0.6 title "iowait", \
      "$cpu" using 5 with linespoints pt 4 ps 0.6 title "steal", \
      "$cpu" using 6 with linespoints pt 4 ps 0.6 title "idle"
+
+set output "iostat-misc$suffix.png"
+unset ylabel
+set ytics nomirror
+set y2label "time"
+set y2tics
+plot "$disk" using  4 axis x1y1 with linespoints title "r/s", \
+     "$disk" using  5 axis x1y1 with linespoints title "w/s", \
+     "$disk" using  8 axis x1y1 with linespoints title "avgrq-sz", \
+     "$disk" using  9 axis x1y1 with linespoints title "avgqu-sz", \
+     "$disk" using 10 axis x1y2 with      points title "await", \
+     "$disk" using 11 axis x1y2 with      points title "svctm"
 
 EOF
 }
