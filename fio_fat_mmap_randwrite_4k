@@ -7,6 +7,7 @@ bs=4k
 numjobs=1
 loops=1
 create_sparse=1
+fallocate=0
 overwrite=0
 group_reporting
 invalidate=0

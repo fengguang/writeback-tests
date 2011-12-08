@@ -5,9 +5,9 @@ size=10G
 bs=64k
 ioengine=mmap
 rw=randwrite
-fallocate=1
 directory=/fs
-# create_sparse=1
+create_sparse=1
+fallocate=0
 overwrite=0
 end_fsync=1
 
