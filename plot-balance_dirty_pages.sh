@@ -63,7 +63,8 @@ set y2tics
 unset logscale y2
 plot "$data" using 1:11 axis x1y1 with points pt 5 ps 1.0 lc rgbcolor "orange"     title "paused", \
      "$data" using 1:12 axis x1y1 with points pt 7 ps 0.6 lc rgbcolor "red"  title "pause", \
-     "$data" using 1:9 axis x1y2 with points pt 2 ps 0.5 lw 1.5 lc rgbcolor "dark-turquoise"    title "dirtied"
+     "$data" using 1:10 axis x1y2 with points pt 1 ps 0.5 lw 1.5 lc rgbcolor "skyblue"    title "target dirtied", \
+     "$data" using 1:9  axis x1y2 with points pt 2 ps 0.5 lw 1.5 lc rgbcolor "dark-turquoise"    title "dirtied"
 
 EOF
 }
