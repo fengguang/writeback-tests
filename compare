@@ -10,8 +10,8 @@ $cfield_hash = Hash.new
 $cfield_array = Array.new
 $cases = Hash.new
 $sum = Array.new
-$grep = //
-$vgrep = /SOME IMPOSSIBLE PATTERN sdfghjkl:1234567890;/
+$grep = Array.new
+$vgrep = Array.new
 
 $evaluate = "write_bw"
 
@@ -111,11 +111,11 @@ opts = OptionParser.new do |opts|
         end
 
         opts.on("-g PATTERN", "--grep PATTERN", "only compare cases that match PATTERN") do |pattern|
-                $grep = Regexp.new(pattern)
+                $grep.push Regexp.new(pattern)
         end
 
         opts.on("-v PATTERN", "--reverse-grep PATTERN", "exclude cases that match PATTERN") do |pattern|
-                $vgrep = Regexp.new(pattern)
+                $vgrep.push Regexp.new(pattern)
         end
 
         opts.on_tail("-h", "--help", "Show this message") do
@@ -261,6 +261,10 @@ def write_bw(path)
 end
 
 def add_dd(path)
+
+	$grep.each  { |re| return false if path !~ re }
+	$vgrep.each { |re| return false if path =~ re }
+
 	if $evaluate == "write_bw"
 		bw = write_bw(path)
 		# puts path, bw
@@ -313,9 +317,7 @@ def add_dd(path)
 end
 
 ARGV.each { |path|
-	if path =~ $grep and not path =~ $vgrep
-		add_dd path
-	end
+	add_dd path
 }
 
 $cfield_array.each { |ckey|
