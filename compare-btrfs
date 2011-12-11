@@ -1,0 +1,35 @@
+#!/bin/bash
+
+BTRFS_EXPRESSIONS=(
+write_bw
+
+# perf list | grep btrfs: | awk '{print $1}'
+btrfs:btrfs_transaction_commit
+btrfs:btrfs_inode_new
+btrfs:btrfs_inode_request
+btrfs:btrfs_inode_evict
+btrfs:btrfs_get_extent
+btrfs:btrfs_ordered_extent_add
+btrfs:btrfs_ordered_extent_remove
+btrfs:btrfs_ordered_extent_start
+btrfs:btrfs_ordered_extent_put
+btrfs:__extent_writepage
+btrfs:btrfs_writepage_end_io_hook
+btrfs:btrfs_sync_file
+btrfs:btrfs_sync_fs
+btrfs:btrfs_delayed_tree_ref
+btrfs:btrfs_delayed_data_ref
+btrfs:btrfs_delayed_ref_head
+btrfs:btrfs_chunk_alloc
+btrfs:btrfs_chunk_free
+btrfs:btrfs_cow_block
+btrfs:btrfs_reserved_extent_alloc
+btrfs:btrfs_reserved_extent_free
+
+)
+
+for e in ${BTRFS_EXPRESSIONS[*]}
+do
+	./compare -g btrfs -e $e "$@"
+	echo
+done

@@ -1,0 +1,64 @@
+#!/bin/bash
+
+EXT3_EXPRESSIONS=(
+write_bw
+
+# perf list | grep ext3: | awk '{print $1}'
+ext3:ext3_free_inode
+ext3:ext3_request_inode
+ext3:ext3_allocate_inode
+ext3:ext3_evict_inode
+ext3:ext3_drop_inode
+ext3:ext3_mark_inode_dirty
+ext3:ext3_write_begin
+ext3:ext3_ordered_write_end
+ext3:ext3_writeback_write_end
+ext3:ext3_journalled_write_end
+ext3:ext3_ordered_writepage
+ext3:ext3_writeback_writepage
+ext3:ext3_journalled_writepage
+ext3:ext3_readpage
+ext3:ext3_releasepage
+ext3:ext3_invalidatepage
+ext3:ext3_discard_blocks
+ext3:ext3_request_blocks
+ext3:ext3_allocate_blocks
+ext3:ext3_free_blocks
+ext3:ext3_sync_file_enter
+ext3:ext3_sync_file_exit
+ext3:ext3_sync_fs
+ext3:ext3_rsv_window_add
+ext3:ext3_discard_reservation
+ext3:ext3_alloc_new_reservation
+ext3:ext3_reserved
+ext3:ext3_forget
+ext3:ext3_read_block_bitmap
+ext3:ext3_direct_IO_enter
+ext3:ext3_direct_IO_exit
+ext3:ext3_unlink_enter
+ext3:ext3_unlink_exit
+ext3:ext3_truncate_enter
+ext3:ext3_truncate_exit
+ext3:ext3_get_blocks_enter
+ext3:ext3_get_blocks_exit
+ext3:ext3_load_inode
+
+# perf list | grep jbd: | awk '{print $1}'
+jbd:jbd_checkpoint
+jbd:jbd_start_commit
+jbd:jbd_commit_locking
+jbd:jbd_commit_flushing
+jbd:jbd_commit_logging
+jbd:jbd_drop_transaction
+jbd:jbd_end_commit
+jbd:jbd_do_submit_data
+jbd:jbd_cleanup_journal_tail
+jbd:jbd_update_superblock_end
+
+)
+
+for e in ${EXT3_EXPRESSIONS[*]}
+do
+	./compare -g ext3 -e $e "$@"
+	echo
+done
