@@ -101,6 +101,6 @@ pgrotated
 
 for e in ${VM_EXPRESSIONS[*]}
 do
-	./compare.rb -e $e "$@"
+	./compare -e $e "$@"
 	echo
 done

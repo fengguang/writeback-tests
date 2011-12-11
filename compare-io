@@ -27,6 +27,6 @@ cpu_idle
 
 for e in ${IO_EXPRESSIONS[*]}
 do
-	./compare.rb -e $e "$@"
+	./compare -e $e "$@"
 	echo
 done

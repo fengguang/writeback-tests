@@ -20,6 +20,6 @@ nfs_commit_execute_time
 
 for e in ${NFS_EXPRESSIONS[*]}
 do
-	./compare.rb -e $e "$@"
+	./compare -e $e "$@"
 	echo
 done
