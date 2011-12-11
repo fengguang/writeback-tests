@@ -5,6 +5,7 @@ enable_tracepoints() {
 	echo 1 > /debug/tracing/events/writeback/balance_dirty_pages/enable
 	echo 1 > /debug/tracing/events/writeback/bdi_dirty_ratelimit/enable
 	echo 1 > /debug/tracing/events/writeback/global_dirty_state/enable
+
 	echo 1 > /debug/tracing/events/writeback/bdi_dirty_state/enable
 	echo 1 > /debug/tracing/events/writeback/task_io/enable
 
@@ -39,7 +40,6 @@ log_start() {
 	# echo deadline > /sys/block/$IOSTAT_DISK/queue/scheduler
 	cat /sys/block/sd?/queue/scheduler > scheduler
 	grep $MNT /proc/self/mountinfo > mountinfo
-	[[ $fstype = 'xfs' ]] && xfs_info $MNT > xfsinfo
 
 	cp /proc/vmstat vmstat-begin
 	cp /proc/slabinfo slabinfo-begin
@@ -61,6 +61,13 @@ log_start() {
 		ssh $nfs_server "cat /debug/tracing/trace_pipe | bzip2" > trace-nfss.bz2 &
 		echo $! > pid-trace-nfss
 	fi
+
+	perf_events='writeback:*,block:*'
+	[[ $fs_events ]] && perf_events+=",$fs_events"
+	ulimit -n 100000
+	mkfifo /tmp/perf_wait
+	perf stat -x'	' -a -e "$perf_events" cat /tmp/perf_wait 1>&2 2> perf-stat &
+
 	mkfifo /tmp/trace_fifo
 	mkfifo /tmp/trace_fifo2
 	tee /tmp/trace_fifo2 < /debug/tracing/trace_pipe > /tmp/trace_fifo &
@@ -74,6 +81,7 @@ log_start() {
 }
 
 log_end() {
+	: > /tmp/perf_wait
 	kill $(cat pid-*)
 	kill $(cat pid)
 	rm pid-*

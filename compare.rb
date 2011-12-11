@@ -20,6 +20,66 @@ $cpu_vars = [ "user", "nice", "system", "iowait", "steal", "idle" ]
 $io_vars = [ "dev", "rrqm_s", "wrqm_s", "r_s", "w_s", "rkB_s", "wkB_s", "avgrq_sz", "avgqu_sz", "await", "svctm", "util" ]
 $nfs_vars = [ "nr_commits", "nr_writes", "write_total", "commit_size", "write_size", "write_queue_time", "write_rtt_time", "write_execute_time", "commit_queue_time", "commit_rtt_time", "commit_execute_time" ]
 
+$perf_vars = [
+  "cpu-cycles",
+  "cycles",
+  "stalled-cycles-frontend",
+  "idle-cycles-frontend",
+  "stalled-cycles-backend",
+  "idle-cycles-backend",
+  "instructions",
+  "cache-references",
+  "cache-misses",
+  "branch-instructions",
+  "branches",
+  "branch-misses",
+  "bus-cycles",
+  "cpu-clock",
+  "task-clock",
+  "page-faults",
+  "faults",
+  "minor-faults",
+  "major-faults",
+  "context-switches",
+  "cs",
+  "cpu-migrations",
+  "migrations",
+  "alignment-faults",
+  "emulation-faults",
+  "L1-dcache-loads",
+  "L1-dcache-load-misses",
+  "L1-dcache-stores",
+  "L1-dcache-store-misses",
+  "L1-dcache-prefetches",
+  "L1-dcache-prefetch-misses",
+  "L1-icache-loads",
+  "L1-icache-load-misses",
+  "L1-icache-prefetches",
+  "L1-icache-prefetch-misses",
+  "LLC-loads",
+  "LLC-load-misses",
+  "LLC-stores",
+  "LLC-store-misses",
+  "LLC-prefetches",
+  "LLC-prefetch-misses",
+  "dTLB-loads",
+  "dTLB-load-misses",
+  "dTLB-stores",
+  "dTLB-store-misses",
+  "dTLB-prefetches",
+  "dTLB-prefetch-misses",
+  "iTLB-loads",
+  "iTLB-load-misses",
+  "branch-loads",
+  "branch-load-misses",
+  "node-loads",
+  "node-load-misses",
+  "node-stores",
+  "node-store-misses",
+  "node-prefetches",
+  "node-prefetch-misses",
+]
+
 $nfs_nr_commits = 0
 $nfs_nr_writes = 0
 
@@ -160,6 +220,26 @@ def nfs_stats(path)
 	end
 end
 
+def is_perf_event(name)
+	return true if name.index(":")
+	return true if $perf_vars.index(name)
+	return false
+end
+
+def perf_stats(path)
+	$perf_event = {}
+	file = "#{path}/perf-stat"
+	return if not File.exist?(file)
+
+	stat = File.new(file).readlines
+	stat.each do |line|
+		v, e = line.split("\t")
+		e.chomp!
+		$perf_event[e] = v.to_i
+		# printf "#{e}=#{v}\n"
+	end
+end
+
 def write_bw(path)
 	cache = "#{path}/write-bandwidth"
 	if File.exist?(cache)
@@ -194,6 +274,9 @@ def add_dd(path)
 	elsif $evaluate.index("io_") == 0
 		iostat_disk(path)
 		eval "bw = $#{$evaluate}"
+	elsif is_perf_event($evaluate)
+		perf_stats(path)
+		bw = $perf_event[$evaluate]
 	else
 		vmstat(path)
 		eval "bw = $#{$evaluate}"

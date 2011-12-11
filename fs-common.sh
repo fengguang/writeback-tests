@@ -12,10 +12,17 @@ fs_options() {
 			mntopt+=",logbsize=262144"
 			mkfsopt="-f -l size=131072b -d agcount=$nr_devices"
 		}
+		fs_events='xfs:*,workqueue:*'
 		;;
 	ext*)
 		[[ $fs =~ :wb ]] && mntopt="-o data=writeback"
 		[[ $fs =~ :jsize=8 ]] && mkfsopt="-J size=8"
+
+		[[ $fstype = ext3 ]] && fs_events='ext3:*,jbd:*'
+		[[ $fstype = ext4 ]] && fs_events='ext4:*,jbd2:*'
+		;;
+	btrfs)
+		fs_events='btrfs:*'
 		;;
 	nfs)
 		mntopt="-o v3,nolock"
