@@ -57,8 +57,9 @@ run_test() {
 
 	post_processing
 
-	sync
 	umount /fs/*
+	wait # perf may be slow: too many xfs events
+	sync
 	reboot
 	exit
 }
