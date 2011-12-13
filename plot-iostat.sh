@@ -65,6 +65,9 @@ cd $dir
 
 test -s iostat || exit
 
+[[ -f iostat-disk ]] || grep ${IOSTAT_DISK:-sda} iostat > iostat-disk
+[[ -f iostat-cpu  ]] || grep -A1 avg-cpu iostat | grep -v '[a-z-]' > iostat-cpu
+
 plot iostat-disk iostat-cpu
 
 lines=$(wc -l iostat-disk | cut -f1 -d' ')
