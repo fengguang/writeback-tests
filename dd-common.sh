@@ -9,9 +9,6 @@ run_fio() {
 	fio $job_file 2>&1 > fio.log &
 	pid=$!
 
-	(sleep 3600 && killall fio)&
-	# echo t > /proc/sysrq-trigger
-
 	wait $pid
 }
 
