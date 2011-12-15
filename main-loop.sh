@@ -25,6 +25,8 @@ for fs in ${FILESYSTEMS:-ext4}
 do
 for scheme in $(test_cases)
 do
+for kopt in "${KERNEL_OPTIONS[@]:-""}"
+do
 	storage=${STORAGE:-HDD}
 	devices=$DEVICES
 	[[ $fs =~ nfs ]] && devices=$NFS_DEVICE
@@ -34,6 +36,7 @@ do
 	else
 		$scheme
 	fi
+done
 done
 done
 done

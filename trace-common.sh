@@ -37,7 +37,6 @@ log_start() {
 	IOSTAT_DISK=$(echo $devices | cut -f3 -d/ | tr -d [0-9])
 
 	uname -a > kernel
-	# echo deadline > /sys/block/$IOSTAT_DISK/queue/scheduler
 	cat /sys/block/sd?/queue/scheduler > scheduler
 	grep $MNT /proc/self/mountinfo > mountinfo
 

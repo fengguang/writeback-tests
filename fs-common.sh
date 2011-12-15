@@ -35,6 +35,11 @@ destroy_devices() {
 	for dev in $devices
 	do
 		dd if=/dev/zero of=$dev bs=4k count=100
+
+		[[ $kopt = deadline || $kopt = noop ]] && {
+			disk=$(echo $dev | cut -f3 -d/ | tr -d [0-9])
+			echo $kopt > /sys/block/$disk/queue/scheduler
+		}
 	done
 }
 

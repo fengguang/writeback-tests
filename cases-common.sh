@@ -4,6 +4,7 @@ make_dir() {
 	config=$1
 	job=$2
 	dir=$(hostname)/$config/$fs-$job-$loop-$(</proc/sys/kernel/osrelease)
+	[[ $kopt ]] && dir+=:$kopt
 
 	[ -d $dir ] && return 1
 
