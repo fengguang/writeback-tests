@@ -31,9 +31,9 @@ run_dd() {
 
 run_test() {
 
+	fs_options
 	destroy_devices
 	make_md
-	fs_options
 	make_fs
 	mount_fs
 

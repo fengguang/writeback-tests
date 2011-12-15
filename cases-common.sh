@@ -115,6 +115,7 @@ thresh() {
 		output_dir="${storage_prefix}thresh=${dirty_thresh}${unit}${bg_name}"
 	else
 		output_dir="$array-${ndisk}${storage}-thresh=${dirty_thresh}${unit}${bg_name}"
+		RAID_LEVEL=${array,,*}
 	fi
 
 	make_dir $output_dir $(dd_job) || return
