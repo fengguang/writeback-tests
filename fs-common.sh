@@ -58,7 +58,7 @@ make_md() {
 
 	bdevs=/dev/md0
 	mdadm --stop $bdevs
-	mdadm --create $bdevs --chunk=${RAID_CHUNK:-1024} --level=$RAID_LEVEL --raid-devices=$nr_devices --force --assume-clean $devices
+	echo y | mdadm --create $bdevs --chunk=${RAID_CHUNK:-1024} --level=$RAID_LEVEL --raid-devices=$nr_devices --force --assume-clean $devices
 }
 
 make_fs() {
