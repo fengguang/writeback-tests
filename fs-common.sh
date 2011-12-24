@@ -31,6 +31,10 @@ fs_options() {
 	esac
 }
 
+is_btrfs_raid_levels() {
+	[[ $fstype = 'btrfs' && $RAID_LEVEL =~ raid(0|1|10) ]]
+}
+
 destroy_devices() {
 	for dev in $devices
 	do
@@ -51,7 +55,7 @@ make_md() {
 		return
 	}
 
-	[[ $fstype = 'btrfs' ]] && {
+	is_btrfs_raid_levels && {
 		bdevs=$(echo $devices | cut -f1 -d' ')
 		return
 	}
@@ -64,8 +68,8 @@ make_md() {
 make_fs() {
 	[[ $fstype = 'nfs' ]] && return
 
-	[[ $fstype = 'btrfs' && $RAID_LEVEL =~ raid ]] && {
-		mkfs -t $fstype $mkfsopt $devices
+	is_btrfs_raid_levels && {
+		mkfs.btrfs --data $RAID_LEVEL $mkfsopt $devices
 		return
 	}
 
