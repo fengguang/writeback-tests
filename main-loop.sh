@@ -25,11 +25,15 @@ for fs in ${FILESYSTEMS:-ext4}
 do
 for scheme in $(test_cases)
 do
+for kver in "${KERNELS[@]:-""}"
+do
 for kopt in "${KERNEL_OPTIONS[@]:-""}"
 do
 	storage=${STORAGE:-HDD}
 	devices=$DEVICES
 	[[ $fs =~ nfs ]] && devices=$NFS_DEVICE
+
+	cd $BASE_DIR
 
 	if [[ $scheme =~ ^fio_ && -f $scheme ]]; then
 		fio_job $scheme
@@ -41,6 +45,9 @@ done
 done
 done
 done
+done
+
+reboot_kexec
 
 # when all done, boot & test next kernel
 wget -q "http://bee/~wfg/cgi-bin/gpxelinux.cgi?hostname=$(hostname)&test_all_done" -O- | head -1 | grep -q reboot && reboot &

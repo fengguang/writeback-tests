@@ -1,12 +1,42 @@
 #!/bin/bash
 
+load_kexec() {
+	[[ $(cat /sys/kernel/kexec_loaded) = 0 ]] && {
+		kexec -l /boot/vmlinuz-$1 --append="$(</proc/cmdline)"
+	}
+}
+
+reboot_kexec() {
+	[[ $(cat /sys/kernel/kexec_loaded) = 1 ]] && {
+		reboot
+		exit
+	}
+	[[ ! $kver && $test_case_executed ]] && {
+		reboot
+		exit
+	}
+}
+
 make_dir() {
 	config=$1
 	job=$2
-	dir=$(hostname)/$config/$fs-$job-$loop-$(</proc/sys/kernel/osrelease)
+	osrelease=$kver
+	[[ $osrelease ]] || osrelease=$(</proc/sys/kernel/osrelease)
+	dir=$(hostname)/$config/$fs-$job-$loop-$osrelease
 	[[ $kopt ]] && dir+=:$kopt
 
 	[ -d $dir ] && return 1
+
+	[[ $osrelease != $(</proc/sys/kernel/osrelease) ]] && {
+		load_kexec $osrelease
+		return 1
+	}
+	[[ $kver && $test_case_executed ]] && {
+		load_kexec $osrelease
+		reboot_kexec
+		exit
+	}
+	test_case_executed=1
 
 	mkdir -p $dir
 	cd $dir

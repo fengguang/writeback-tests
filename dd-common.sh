@@ -57,6 +57,5 @@ run_test() {
 	wait # perf may be slow: too many xfs events
 	umount /fs/*
 	sync
-	reboot
-	exit
+	reboot_kexec
 }
