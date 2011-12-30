@@ -132,7 +132,7 @@ def iostat_cpu(path)
 	eval "$#{$evaluate} = 0"
 	vars = $cpu_vars
 	vars.each { |var| eval "$cpu_#{var} = 0.0" }
-	return if not File.exist?(file)
+	return if not File.readable?(file)
 	stat = File.new(file).readlines
 	stat.each_with_index do |line, i|
 		next if i < 3
@@ -147,7 +147,7 @@ def iostat_disk(path)
 	eval "$#{$evaluate} = 0"
 	vars = $io_vars
 	vars.each { |var| eval "$io_#{var} = 0.0" }
-	return if not File.exist?(file)
+	return if not File.readable?(file)
 	stat = File.new(file).readlines
 	stat.each_with_index do |line, i|
 		next if i < 3
@@ -160,7 +160,7 @@ end
 def vmstat(path)
 	file = "#{path}/vmstat-end"
 	eval "$#{$evaluate} = 0"
-	return if not File.exist?(file)
+	return if not File.readable?(file)
 
 	stat = File.new(file).readlines
 	stat.each do |line|
@@ -187,7 +187,7 @@ def nfs_stats(path)
 	$nfs_commit_rtt_time = 0
 	$nfs_commit_execute_time = 0
 
-	return if not File.exist?(file)
+	return if not File.readable?(file)
 
 	stat = File.new(file).readlines
 	nfsmnt = nil
@@ -229,7 +229,7 @@ end
 def perf_stats(path)
 	$perf_event = {}
 	file = "#{path}/perf-stat"
-	return if not File.exist?(file)
+	return if not File.readable?(file)
 
 	stat = File.new(file).readlines
 	stat.each do |line|
@@ -242,20 +242,20 @@ end
 
 def write_bw(path)
 	cache = "#{path}/write-bandwidth"
-	if File.exist?(cache)
+	if File.readable?(cache)
 		cached_bw = File.new(cache).readlines
 		return cached_bw[0].to_f
 	end
 	bw = 0 # MB/s
 	file = "#{path}/trace-global_dirty_state-flusher"
-	if File.exist?(file)
+	if File.readable?(file)
 		state = File.new(file).readlines
 		n = [state.size / 10, 100].min
 		return 0 if n == 0
 		time0, dirty, writeback, unstable, bg_thresh, thresh, limit, dirtied, written0 = state[0].split
 		time, dirty, writeback, unstable, bg_thresh, thresh, limit, dirtied, written = state[-n].split
 		bw = (written.to_i - written0.to_i) / (time.to_f - time0.to_f) / 256
-		File.open(cache, "w") { |f| f.puts "#{bw}" }
+		File.open(cache, "w") { |f| f.puts "#{bw}" } if File.writable?(path)
 	end
 	return bw
 end
