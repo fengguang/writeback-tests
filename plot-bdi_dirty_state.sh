@@ -74,6 +74,9 @@ bdis=$({ cat trace || bzcat trace.bz2; } |\
 		sort -u)
 
 # bdis=$(cut -d' ' -f3 mountinfo)
+
+[[ $bdis ]] || continue
+
 n=0
 for bdi in $bdis
 do
