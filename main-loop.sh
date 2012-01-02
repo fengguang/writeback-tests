@@ -48,6 +48,3 @@ done
 done
 
 reboot_kexec
-
-# when all done, boot & test next kernel
-wget -q "http://bee/~wfg/cgi-bin/gpxelinux.cgi?hostname=$(hostname)&test_all_done" -O- | head -1 | grep -q reboot && reboot &
