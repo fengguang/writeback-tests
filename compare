@@ -265,6 +265,8 @@ def add_dd(path)
 	$grep.each  { |re| return false if path !~ re }
 	$vgrep.each { |re| return false if path =~ re }
 
+	return false if File.exists?("#{path}/.live")
+
 	if $evaluate == "write_bw"
 		bw = write_bw(path)
 		# puts path, bw

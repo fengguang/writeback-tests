@@ -37,6 +37,7 @@ run_test() {
 	make_fs
 	mount_fs
 
+	touch .live
 	log_start
 
 	enable_tracepoints
@@ -57,5 +58,6 @@ run_test() {
 	wait # perf may be slow: too many xfs events
 	umount /fs/*
 	sync
+	rm .live
 	reboot_kexec
 }

@@ -60,7 +60,6 @@ bzcat trace.bz2 | grep -F "flush-" |\
 	sed 's/[^0-9.-]\+/ /g' > $trace-flusher
 	# grep -vF 'bdi 0:15:' |\
 
-rm -f write-bandwidth
 plot $trace-flusher
 
 lines=$(wc -l $trace | cut -f1 -d' ')
