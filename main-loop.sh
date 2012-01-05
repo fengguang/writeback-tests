@@ -32,6 +32,7 @@ do
 	storage=${STORAGE:-HDD}
 	devices=$DEVICES
 	[[ $fs =~ nfs ]] && devices=$NFS_DEVICE
+	RAID_LEVEL=jbod
 
 	cd $BASE_DIR
 
