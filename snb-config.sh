@@ -1,5 +1,11 @@
 DEVICES="/dev/sda7"
 DEVICES="/dev/sdb1 /dev/sdc1 /dev/sdd1 /dev/sde1"
+DEVICES="
+$(readlink -f /dev/disk/by-path/pci-0000:03:00.0-sas-0x5fcfffff00000002-lun-0-part1)
+$(readlink -f /dev/disk/by-path/pci-0000:03:00.0-sas-0x5fcfffff00000003-lun-0-part1)
+$(readlink -f /dev/disk/by-path/pci-0000:03:00.0-sas-0x5fcfffff00000004-lun-0-part1)
+$(readlink -f /dev/disk/by-path/pci-0000:03:00.0-sas-0x5fcfffff00000005-lun-0-part1)
+"
 
 FILESYSTEMS="nfs"
 FILESYSTEMS="xfs ext4 ext3 btrfs"
