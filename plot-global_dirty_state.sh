@@ -40,25 +40,25 @@ cd $dir
 
 [[ -f trace || -f trace.bz2 ]] || exit
 
+trace_tab() {
+	grep -o "[0-9.]\+: $1: .*" |\
+	sed -e 's/bdi [^ ]\+//' \
+	    -e 's/[^0-9.-]\+/ /g'
+}
+
 trace=trace-global_dirty_state
 
 for dd in $(cat pid)
 do
-	bzcat trace.bz2 | grep -- "$dd \+\[" |\
-		grep -F global_dirty_state |\
-		sed 's/bdi [^ ]\+//' |\
-		sed 's/.*\]//g' |\
-		sed 's/[^0-9.-]\+/ /g' > $trace
+	bzcat trace.bz2 | grep -F $dd | grep -- "-$dd \+\[" |\
+		trace_tab global_dirty_state > $trace
 	test -s $trace && break
 		# grep -vF 'bdi 0:15:' |\
 done
 test -s $trace || { rm $trace; exit; }
 
 bzcat trace.bz2 | grep -F "flush-" |\
-	grep -F "global_dirty_state" |\
-	sed 's/.*\]//g' |\
-	sed 's/[^0-9.-]\+/ /g' > $trace-flusher
-	# grep -vF 'bdi 0:15:' |\
+	trace_tab global_dirty_state > $trace-flusher
 
 plot $trace-flusher
 

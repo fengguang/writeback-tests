@@ -65,6 +65,12 @@ cd $dir
 
 [[ -f trace || -f trace.bz2 ]] || exit
 
+trace_tab() {
+	grep -o "[0-9.]\+: $1: .*" |\
+	sed -e 's/bdi [^ ]\+//' \
+	    -e 's/[^0-9.-]\+/ /g'
+}
+
 trace=trace-bdi_dirty_state
 
 bdis=$({ cat trace || bzcat trace.bz2; } |\
@@ -82,9 +88,7 @@ for bdi in $bdis
 do
 	{ cat trace || bzcat trace.bz2; } |\
 		grep -F "bdi_dirty_state: bdi $bdi: " |\
-		sed 's/bdi [^ ]\+//' |\
-		sed 's/.*\]//g' |\
-		sed 's/[^0-9.-]\+/ /g' > $trace-$bdi
+		trace_tab bdi_dirty_state > $trace-$bdi
 	test -s $trace-$bdi || { rm $trace-$bdi; continue; }
 	tail -n300 $trace-$bdi > $trace-$bdi-300
 

@@ -54,22 +54,22 @@ trace=trace-writeback_single_inode
 # ino=$(cat trace | awk '/writeback_single_inode.*I_DIRTY/{if ($6 == "0:15:") continue; print $7; exit}')
 ino=$(awk '{print $1; exit}' ls-files)
 [[ -n $ino ]] || exit
-bzcat trace.bz2 | grep -F "ino=$ino " |\
-	grep writeback_single_inode |\
-	grep -v 9223372036854 |\
-	sed 's/.*\]//' |\
-	sed 's/bdi.[^ ]\+//' |\
-	sed 's/[^0-9.-]\+/ /g'  > $trace-ino=$ino
 
-plot_inode	$trace-ino=$ino -ino=$ino
+trace_tab() {
+	grep -o "[0-9.]\+: $1: .*" |\
+	sed -e 's/bdi [^ ]\+//' \
+	    -e 's/[^0-9.-]\+/ /g'
+}
 
 bzcat trace.bz2 | grep -F "writeback_single_inode" |\
-	grep -v 9223372036854 |\
-	sed 's/.*\]//' |\
-	sed 's/bdi.[^ ]\+//' |\
-	sed 's/[^0-9.-]\+/ /g'  > $trace
+	trace_tab writeback_single_inode |\
+	awk '{ if ($6 < 123456789) print }' > $trace
 
 plot 		$trace
+
+awk "{ if (\$2 == $ino) print }" < $trace > $trace-ino=$ino
+
+plot_inode	$trace-ino=$ino -ino=$ino
 
 # lines=$(wc -l $trace | cut -f1 -d' ')
 # if [[ $lines -ge 300 ]]; then

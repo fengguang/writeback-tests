@@ -88,19 +88,17 @@ do
 done
 test $? = 0 || exit
 
-bdi=$(bzcat trace.bz2 | grep -- "-$dd \+\[" | awk '/balance_dirty_pages/{print $6; exit}')
+bdi=$(bzcat trace.bz2 | grep -- "-$dd \+\[" | grep -om1 'balance_dirty_pages: bdi .*:'|cut -f3 -d' ')
 bzcat trace.bz2 | grep -E -- "-$dd +\[.* (balance_dirty_pages|bdi_dirty_ratelimit): bdi $bdi " > $trace-$dd
 
-grep -F balance_dirty_pages $trace-$dd |\
-	sed 's/^.*] //' |\
-	sed 's/bdi [^ ]\+//' |\
-	sed 's/[^0-9.-]\+/ /g' |\
-	sed 's/\.\.\. *//' > $trace
-grep -F bdi_dirty_ratelimit: $trace-$dd |\
-	sed 's/^.*] //' |\
-	sed 's/bdi [^ ]\+//' |\
-	sed 's/[^0-9.-]\+/ /g' |\
-	sed 's/\.\.\. *//' > $trace-bw
+trace_tab() {
+	grep -o "[0-9.]\+: $1: .*" |\
+	sed -e 's/bdi [^ ]\+//' \
+	    -e 's/[^0-9.-]\+/ /g'
+}
+
+trace_tab balance_dirty_pages < $trace-$dd > $trace
+trace_tab bdi_dirty_ratelimit < $trace-$dd > $trace-bw
 
 # width=1000
 # width=1280
@@ -119,19 +117,8 @@ lines=$(wc -l $trace | cut -f1 -d' ')
 
 if [[ $lines -gt 800 ]]; then
 
-tail -n 500 $trace-$dd |\
-	grep -F balance_dirty_pages |\
-	sed 's/^.*\] //' |\
-	sed 's/bdi [^ ]\+//' |\
-	sed 's/[^0-9.-]\+/ /g' |\
-	sed 's/\.\.\. *//' > $trace-500
-
-tail -n 500 $trace-$dd |\
-	grep -F bdi_dirty_ratelimit: |\
-	sed 's/^.*\] //' |\
-	sed 's/bdi [^ ]\+//' |\
-	sed 's/[^0-9.-]\+/ /g' |\
-	sed 's/\.\.\. *//' > $trace-500-bw
+tail -n 500 $trace-$dd | trace_tab balance_dirty_pages > $trace-500
+tail -n 500 $trace-$dd | trace_tab bdi_dirty_ratelimit > $trace-500-bw
 
 plot $trace-500 -500
 fi

@@ -34,12 +34,14 @@ dd=($(head -n3 pid))
 for pid in ${dd[0]} ${dd[1]} ${dd[2]}
 do
 	# if ($paused == 0) dirtied += $dirtied
-	bzcat trace.bz2 | grep -- "-$pid \+\[" | awk '/task_io/{dirtied += strtonum(substr($14, 9)); print $3, substr($6, 7);}' > task-bw-$pid
+	bzcat trace.bz2 | grep -F -- "-$pid [" | grep -o "[0-9.]\+: task_io: .*" | awk '{dirtied += strtonum(substr($12, 9)); print $1, substr($4, 7);}' > task-bw-$pid
 	tail -n300 task-bw-$pid > task-bw-$pid-300
 done
 
-plot
-plot -300
+if [[ -s task-bw-${dd[0]} ]]; then
+	plot
+	plot -300
+fi
 
 cd ..
 done
