@@ -44,6 +44,13 @@ log_start() {
 	cp /proc/slabinfo slabinfo-begin
 	cat /proc/self/mountstats > mountstats-begin
 
+	# record dmesg progressively, so that we get some information
+	# before the kernel is goes wrong
+	killall klogd
+	dmesg > dmesg
+	cat /proc/kmsg >> dmesg &
+	echo $! > pid-dmesg
+
 	# collect-vmstat.sh $RUNTIME &
 	# echo $! > pid-vmstat
 	iostat -tkx 1 $RUNTIME > iostat &
@@ -95,7 +102,6 @@ log_end() {
 	grep . /sys/block/sd?/bdi/writeback_stats  > writeback_stats
 	[ -s writeback_stats ] || rm writeback_stats
 	[ -f /proc/lock_stat ] && cat /proc/lock_stat > lock_stat
-	dmesg > dmesg
 	cp /proc/config.gz .
 	find $MNT -type f \( -name zero-* -o -name f? \) | xargs ls -li > ls-files
 	find $MNT -type f \( -name zero-* -o -name f? \) | xargs rm &
