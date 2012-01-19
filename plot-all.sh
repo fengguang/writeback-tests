@@ -43,12 +43,14 @@ plot_dir() {
 
 while true
 do
-	for file in $BASE_DIR/plot_jobs/*
+	for file in $BASE_DIR/plot-jobs/*
 	do
 		if [[ -f "$file" ]]; then
 			dir=$(<$file)
 			rm $file || continue  # someone else took the job?
-			plot_dir $dir
+			for d in $dir; do
+				plot_dir $d
+			done
 		fi
 	done
 

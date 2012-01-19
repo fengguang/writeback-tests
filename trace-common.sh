@@ -139,8 +139,8 @@ post_processing() {
 
 	if (( $PLOT_IN_TESTBOX == 0 )); then
 		sync
-		mkdir -p $BASE_DIR/plot_jobs/
-		plot_job=$BASE_DIR/plot_jobs/$(hostname)-$(date +'%F-%T')
+		mkdir -p $BASE_DIR/plot-jobs/
+		plot_job=$BASE_DIR/plot-jobs/$(hostname)-$(date +'%F-%T')
 		echo $PWD > $plot_job
 		chmod g+w   $plot_job
 	else
