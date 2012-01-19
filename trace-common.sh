@@ -2,6 +2,8 @@
 
 enable_tracepoints() {
 
+	echo 1 > /debug/tracing/tracing_on
+
 	echo 1 > /debug/tracing/events/writeback/balance_dirty_pages/enable
 	echo 1 > /debug/tracing/events/writeback/bdi_dirty_ratelimit/enable
 	echo 1 > /debug/tracing/events/writeback/global_dirty_state/enable
@@ -87,6 +89,7 @@ log_start() {
 }
 
 log_end() {
+	echo 0 > /debug/tracing/tracing_on
 	: > /tmp/perf_wait
 	kill $(cat pid-*)
 	kill $(cat pid)
