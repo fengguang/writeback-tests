@@ -144,6 +144,6 @@ post_processing() {
 		echo $PWD > $plot_job
 		chmod g+w   $plot_job
 	else
-		$BASE_DIR/plot-traces.sh .
+		$BASE_DIR/plot-all.sh .
 	fi
 }
