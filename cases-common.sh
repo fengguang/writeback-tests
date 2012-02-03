@@ -48,6 +48,19 @@ fio_job() {
 	run_test fio
 }
 
+check_partition_size() {
+	for dev do
+		part=$(basename $dev)
+		size=$(grep $part /proc/partitions | awk '{ print $3 }')
+		[[ $size ]] || return 1
+		if [[ $prev_size ]]; then
+			[[ $size != $prev_size ]] || return 1
+		else
+			prev_size=size
+		fi
+	done
+}
+
 jbod_12hdd() {
 
 	devices="
@@ -69,6 +82,8 @@ jbod_12hdd() {
 	local ioengine=$2
 	local fallocate=$3
 	local blocksize=$4
+
+	check_partition_size $devices || return
 
 	job=fio_jbod_12hdd_${rw}_${ioengine}_${fallocate}_${blocksize}
 
@@ -147,6 +162,8 @@ thresh() {
 	else
 		output_dir="$array-${ndisk}${storage}-thresh=${dirty_thresh}${unit}${bg_name}"
 	fi
+
+	check_partition_size $devices || return
 
 	make_dir $output_dir $(dd_job) || return
 
