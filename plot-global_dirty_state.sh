@@ -48,6 +48,11 @@ trace_tab() {
 
 trace=trace-global_dirty_state
 
+bzcat trace.bz2 | grep -F "flush-" |\
+	trace_tab global_dirty_state > $trace-flusher
+
+plot $trace-flusher
+
 for dd in $(cat pid)
 do
 	bzcat trace.bz2 | grep -F $dd | grep -- "-$dd \+\[" |\
@@ -56,11 +61,6 @@ do
 		# grep -vF 'bdi 0:15:' |\
 done
 test -s $trace || { rm $trace; exit; }
-
-bzcat trace.bz2 | grep -F "flush-" |\
-	trace_tab global_dirty_state > $trace-flusher
-
-plot $trace-flusher
 
 lines=$(wc -l $trace | cut -f1 -d' ')
 
