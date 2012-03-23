@@ -7,7 +7,7 @@ fs_options() {
 
 	case $fs in
 	xfs)
-		mntopt="-o allocsize=1g,nobarrier,inode64,delaylog"
+		mntopt="-o allocsize=1g,nobarrier,inode64"
 		[[ $RAID_LEVEL =~ raid ]] && {
 			mntopt+=",logbsize=262144"
 			mkfsopt="-f -l size=131072b -d agcount=$nr_devices"
