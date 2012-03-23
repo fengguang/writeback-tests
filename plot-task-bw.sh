@@ -24,17 +24,26 @@ for dir
 do
 cd $dir
 
-declare -a dd
-dd=($(head -n3 pid)) 
+bzcat trace.bz2 | grep -F task_io | awk '/(dd|tar|fio)-[0-9]+/{print $1}'| sed 's/[^0-9]//g' | head -n100 | sort | uniq > dd-pid
 
-[[ ${#dd[*]} -lt 3 ]] && { cd ..; continue; }
+declare -a dd
+dd=($(cat pid dd-pid))
+
+
+[[ ${#dd[*]} -lt 1 ]] && { cd ..; continue; }
 
 #               dd-3876  [014]   151.167682: balance_dirty_pages: bdi btrfs-1: limit=0 goal=247413 dirty=212307 bdi_goal=649 bdi_dirty=212395 base_bw=102400 task_bw=13300 dirtied=256 dirtied_pause=256 period think pause=77 paused=0
+
+trace_tab() {
+	grep -o "[0-9.]\+: $1: .*" |\
+	sed -e 's/bdi [^ ]\+//' \
+	    -e 's/[^0-9.-]\+/ /g'
+}
 
 for pid in ${dd[0]} ${dd[1]} ${dd[2]}
 do
 	# if ($paused == 0) dirtied += $dirtied
-	bzcat trace.bz2 | grep -F -- "-$pid [" | grep -o "[0-9.]\+: task_io: .*" | awk '{dirtied += strtonum(substr($12, 9)); print $1, substr($4, 7);}' > task-bw-$pid
+	bzcat trace.bz2 | grep -F -- "-$pid " | trace_tab task_io > task-bw-$pid
 	tail -n300 task-bw-$pid > task-bw-$pid-300
 done
 
