@@ -74,7 +74,7 @@ log_start() {
 	[[ $fs_events ]] && perf_events+=",$fs_events"
 	ulimit -n 100000
 	mkfifo /tmp/perf_wait
-	perf stat -x'	' -a -e "$perf_events" cat /tmp/perf_wait 1>&2 2> perf-stat &
+	perf stat -x'	' -a -e "$perf_events" -o perf-stat cat /tmp/perf_wait &
 
 	mkfifo /tmp/trace_fifo
 	mkfifo /tmp/trace_fifo2

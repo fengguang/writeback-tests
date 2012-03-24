@@ -233,6 +233,7 @@ def perf_stats(path)
 
 	stat = File.new(file).readlines
 	stat.each do |line|
+		next if not line =~ /^[0-9]/
 		v, e = line.split("\t")
 		e.chomp!
 		$perf_event[e] = v.to_i
