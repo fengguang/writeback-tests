@@ -35,6 +35,12 @@ enable_tracepoints() {
 	fi
 }
 
+trace_tab() {
+	grep -o "[0-9.]\+: $1: .*" |\
+	sed -e 's/bdi [^ ]\+//' \
+	    -e 's/[^0-9.-]\+/ /g'
+}
+
 log_start() {
 	IOSTAT_DISK=$(echo $devices | cut -f3 -d/ | tr -d [0-9])
 
@@ -83,9 +89,7 @@ log_start() {
 	# tee /tmp/trace_fifo2 < /tmp/trace_fifo | bzip2 > trace.bz2 &
 	bzip2 < /tmp/trace_fifo > trace.bz2 &
 	grep -F "flush-" /tmp/trace_fifo2 |\
-		grep -F "global_dirty_state" |\
-		sed 's/.*\]//g' |\
-		sed 's/[^0-9.-]\+/ /g' > trace-global_dirty_state-flusher &
+		trace_tab global_dirty_state > trace-global_dirty_state-flusher &
 }
 
 log_end() {
