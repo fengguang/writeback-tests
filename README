@@ -1,0 +1,41 @@
+The main features are
+
+- automated dd/fio tests
+
+- combinations of kernel/fs/fio job/nr_dd/dirty_thresh that is
+  hopefully complete enough to catch common performance regressions
+
+- compare scripts for quickly evaluating performance and locate regressions
+
+- detailed logs and graphs for analyzing regressions
+
+To try it out,
+
+1) copy all files to
+
+        /path/to/writeback-tests
+
+2) basic configuration
+
+        cp fat-config.sh $(hostname)-config.sh
+        vi  $(hostname)-config.sh
+        vi config.sh
+
+Minimal configuration is to prepare at least one empty partition and
+point DEVICES to it, create one empty mount point and point MNT to it.
+
+3) add a hook at the end of rc.local:
+
+        /path/to/writeback-tests/main-loop.sh
+
+main-loop.sh will test one case on each fresh boot.  It will
+automatically reboot the test box for each test cases until all done.
+
+Each test run will save its log files to a unique directory
+
+        /path/to/writeback-tests/$(hostname)/<path1>/<path2>/
+
+and if that directory already exists, the test case will be skipped.
+
+We may further do a queue based job submission/execution system,
+however this silly loop works good enough for me now :-)
