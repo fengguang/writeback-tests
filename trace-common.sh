@@ -8,18 +8,19 @@ enable_tracepoints() {
 	echo 1 > /debug/tracing/events/writeback/bdi_dirty_ratelimit/enable
 	echo 1 > /debug/tracing/events/writeback/global_dirty_state/enable
 
-	echo 1 > /debug/tracing/events/writeback/bdi_dirty_state/enable
-	echo 1 > /debug/tracing/events/writeback/task_io/enable
-
 	echo 1 > /debug/tracing/events/writeback/writeback_single_inode/enable
 	echo 1 > /debug/tracing/events/writeback/writeback_wait/enable
 	echo 1 > /debug/tracing/events/writeback/writeback_start/enable
 	echo 1 > /debug/tracing/events/writeback/writeback_written/enable
 	echo 1 > /debug/tracing/events/writeback/writeback_exec/enable
 	echo 1 > /debug/tracing/events/writeback/writeback_wake_background/enable
-	echo 1 > /debug/tracing/events/writeback/fdatawrite_range/enable
 
-	echo 1 > /debug/tracing/events/writeback/prop_norm_single/enable
+	# echo 1 > /debug/tracing/events/writeback/bdi_dirty_state/enable
+	# echo 1 > /debug/tracing/events/writeback/task_io/enable
+
+	# echo 1 > /debug/tracing/events/writeback/fdatawrite_range/enable
+
+	# echo 1 > /debug/tracing/events/writeback/prop_norm_single/enable
 
 	# echo 1 > /debug/tracing/events/btrfs/btrfs_ordered_extent_add/enable
 	# echo 1 > /debug/tracing/events/btrfs/btrfs_ordered_extent_start/enable
