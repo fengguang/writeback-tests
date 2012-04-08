@@ -98,7 +98,7 @@ trace_tab() {
 }
 
 trace_tab balance_dirty_pages < $trace-$dd > $trace
-bzcat trace.bz2 | trace_tab bdi_dirty_ratelimit > $trace-bw
+bzcat trace.bz2 | grep "bdi $bdi " trace_tab bdi_dirty_ratelimit > $trace-bw
 
 # width=1000
 # width=1280
