@@ -46,12 +46,12 @@ for pid in ${dd[0]} ${dd[1]} ${dd[2]}
 do
 	# if ($paused == 0) dirtied += $dirtied
 	bzcat trace.bz2 | grep -F -- "-$pid " | trace_tab task_io > task-bw-$pid
-	tail -n300 task-bw-$pid > task-bw-$pid-300
+	# tail -n300 task-bw-$pid > task-bw-$pid-300
 done
 
 if [[ -s task-bw-${dd[0]} ]]; then
 	plot
-	plot -300
+	# plot -300
 fi
 
 cd ..
