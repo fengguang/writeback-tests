@@ -14,9 +14,9 @@ set grid
 
 set output "balance_dirty_pages-task-bw$suffix.png"
 set ylabel "dirtied (MB)"
-plot "task-bw-${dd[0]}$suffix" using 1:(\$2/1048576) with steps lw 2.0 lc rgbcolor "red"      title "task ${dd[0]}", \
-     "task-bw-${dd[1]}$suffix" using 1:(\$2/1048576) with steps lw 1.9 lc rgbcolor "gold"     title "task ${dd[1]}", \
-     "task-bw-${dd[2]}$suffix" using 1:(\$2/1048576) with steps lw 1.8 lc rgbcolor "web-blue" title "task ${dd[2]}"
+plot "task-bw-${dd[0]}$suffix" using 1:(\$3/1048576) with steps lw 2.0 lc rgbcolor "red"      title "task ${dd[0]}", \
+     "task-bw-${dd[1]}$suffix" using 1:(\$3/1048576) with steps lw 1.9 lc rgbcolor "gold"     title "task ${dd[1]}", \
+     "task-bw-${dd[2]}$suffix" using 1:(\$3/1048576) with steps lw 1.8 lc rgbcolor "web-blue" title "task ${dd[2]}"
 EOF
 }
 
@@ -24,10 +24,12 @@ for dir
 do
 cd $dir
 
-bzcat trace.bz2 | grep -F task_io | awk '/(dd|tar|fio)-[0-9]+/{print $1}'| sed 's/[^0-9]//g' | head -n100 | sort | uniq > dd-pid
+[ -s pid ] || {
+bzcat trace.bz2 | grep -F task_io | awk '/(dd|cp|tar|fio)-[0-9]+/{print $1}'| sed 's/[^0-9]//g' | head -n3000 | sort | uniq > dd-pid
+}
 
 declare -a dd
-dd=($(cat pid dd-pid))
+dd=($(cat pid dd-pid 2>/dev/null))
 
 
 [[ ${#dd[*]} -lt 1 ]] && { cd ..; continue; }
