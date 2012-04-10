@@ -52,7 +52,7 @@ plot \
      "$data" using 1:(\$3/256)  with linespoints pt 4 ps 0.9 lc rgbcolor "web-green"   title "setpoint", \
      "$data" using 1:(\$4/256)  with      points      lw 1.2 lc rgbcolor "orange-red" title "dirty", \
      "$data" using 1:(\$8/1024) axis x1y2 with   points pt 3 ps 0.5 lw 1.5 lc rgbcolor "greenyellow" title "task ratelimit", \
-     "$bw_file" using 1:(\$7/1024) axis x1y2 with   points pt 3 ps 0.6 lc rgbcolor "skyblue" title "balanced dirty ratelimit", \
+     "$data-$blkcg_bw" using 1:(\$7/1024) axis x1y2 with   points pt 3 ps 0.6 lc rgbcolor "skyblue" title "balanced dirty ratelimit", \
      "$data" using 1:(\$7/1024) axis x1y2 with   steps lw 2 lc rgbcolor "blue" title "dirty ratelimit"
 
 set output "balance_dirty_pages-pause$suffix.png"
@@ -92,7 +92,7 @@ test $? = 0 || exit
 test "$dd" || exit
 
 bdi=$(bzcat trace.bz2 | grep -- "-$dd \+\[" | grep -om1 'balance_dirty_pages: bdi .*:'|cut -f3 -d' ')
-bzcat trace.bz2 | grep -E -- "-$dd +\[.* (balance_dirty_pages|bdi_dirty_ratelimit): bdi $bdi " > $trace-$dd
+bzcat trace.bz2 | grep -E -- "-$dd +\[.* (balance_dirty_pages|bdi_dirty_ratelimit|blkcg_dirty_ratelimit): bdi $bdi " > $trace-$dd
 
 trace_tab() {
 	grep -o "[0-9.]\+: $1: .*" |\
@@ -104,9 +104,9 @@ trace_tab balance_dirty_pages < $trace-$dd > $trace
 bzcat trace.bz2 | grep "bdi $bdi " | trace_tab bdi_dirty_ratelimit > $trace-bw
 if grep -q blkcg_dirty_ratelimit $trace-$dd; then
 	trace_tab blkcg_dirty_ratelimit < $trace-$dd > $trace-bw-blkcg
-	bw_file=$trace-bw-blkcg
+	blkcg_bw=bw-blkcg
 else
-	bw_file=$trace-bw
+	blkcg_bw=bw
 fi
 
 # width=1000
@@ -128,7 +128,9 @@ if [[ $lines -gt 800 ]]; then
 
 tail -n 500 $trace-$dd | trace_tab balance_dirty_pages > $trace-500
 tail -n 500 $trace-$dd | trace_tab bdi_dirty_ratelimit > $trace-500-bw
+[ $blkcg_bw = bw-blkcg ] && {
 tail -n 500 $trace-$dd | trace_tab blkcg_dirty_ratelimit > $trace-500-bw-blkcg
+}
 
 plot $trace-500 -500
 fi
