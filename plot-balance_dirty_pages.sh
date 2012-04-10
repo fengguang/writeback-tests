@@ -82,7 +82,7 @@ bzcat trace.bz2 | grep -F balance_dirty_pages | awk '/<...>-[0-9]+/{print $1; ex
 
 # dd=$(cat pid | cut -f1 -d' ')
 # [[ -n "$dd" ]] || exit
-for dd in $(cat pid fio-pid more-pid)
+for dd in $(cat pid fio-pid more-pid 2>/dev/null)
 do
 	bzcat trace.bz2 |\
 		grep -- "-$dd \+\[" |\
@@ -101,7 +101,7 @@ trace_tab() {
 }
 
 trace_tab balance_dirty_pages < $trace-$dd > $trace
-bzcat trace.bz2 | grep "bdi $bdi " trace_tab bdi_dirty_ratelimit > $trace-bw
+bzcat trace.bz2 | grep "bdi $bdi " | trace_tab bdi_dirty_ratelimit > $trace-bw
 if grep -q blkcg_dirty_ratelimit $trace-$dd; then
 	trace_tab blkcg_dirty_ratelimit < $trace-$dd > $trace-bw-blkcg
 	bw_file=$trace-bw-blkcg
