@@ -233,6 +233,19 @@ jbod_10hdd_thresh_10g()		{ thresh 10   G 10; }
 jbod_10hdd_thresh_100g()	{ thresh 100  G 10; }
 jbod_10hdd_thresh_1000g()	{ thresh 1000 G 10; }
 
+jbod_12hdd_thresh_1m()		{ thresh 1    M 12; }
+jbod_12hdd_thresh_10m()		{ thresh 10   M 12; }
+jbod_12hdd_thresh_100m()	{ thresh 100  M 12; }
+jbod_12hdd_thresh_1000m()	{ thresh 1000 M 12; }
+
+jbod_12hdd_thresh_1g()		{ thresh 1    G 12; }
+jbod_12hdd_thresh_2g()		{ thresh 2    G 12; }
+jbod_12hdd_thresh_4g()		{ thresh 4    G 12; }
+jbod_12hdd_thresh_8g()		{ thresh 8    G 12; }
+jbod_12hdd_thresh_10g()		{ thresh 10   G 12; }
+jbod_12hdd_thresh_100g()	{ thresh 100  G 12; }
+jbod_12hdd_thresh_1000g()	{ thresh 1000 G 12; }
+
 raid0_2hdd_thresh_1m()		{ thresh 1    M 2 RAID0; }
 raid0_2hdd_thresh_10m()		{ thresh 10   M 2 RAID0; }
 raid0_2hdd_thresh_100m()	{ thresh 100  M 2 RAID0; }
@@ -264,6 +277,19 @@ raid0_10hdd_thresh_10g()	{ thresh 10   G 10 RAID0; }
 raid0_10hdd_thresh_100g()	{ thresh 100  G 10 RAID0; }
 raid0_10hdd_thresh_1000g()	{ thresh 1000 G 10 RAID0; }
 
+raid0_12hdd_thresh_1m()		{ thresh 1    M 12 RAID0; }
+raid0_12hdd_thresh_10m()	{ thresh 10   M 12 RAID0; }
+raid0_12hdd_thresh_100m()	{ thresh 100  M 12 RAID0; }
+raid0_12hdd_thresh_1000m()	{ thresh 1000 M 12 RAID0; }
+
+raid0_12hdd_thresh_1g()		{ thresh 1    G 12 RAID0; }
+raid0_12hdd_thresh_2g()		{ thresh 2    G 12 RAID0; }
+raid0_12hdd_thresh_4g()		{ thresh 4    G 12 RAID0; }
+raid0_12hdd_thresh_8g()		{ thresh 8    G 12 RAID0; }
+raid0_12hdd_thresh_10g()	{ thresh 10   G 12 RAID0; }
+raid0_12hdd_thresh_100g()	{ thresh 100  G 12 RAID0; }
+raid0_12hdd_thresh_1000g()	{ thresh 1000 G 12 RAID0; }
+
 raid1_2hdd_thresh_1m()		{ thresh 1    M 2 RAID1; }
 raid1_2hdd_thresh_10m()		{ thresh 10   M 2 RAID1; }
 raid1_2hdd_thresh_100m()	{ thresh 100  M 2 RAID1; }
@@ -294,6 +320,19 @@ raid5_10hdd_thresh_8g()		{ thresh 8    G 10 RAID5; }
 raid5_10hdd_thresh_10g()	{ thresh 10   G 10 RAID5; }
 raid5_10hdd_thresh_100g()	{ thresh 100  G 10 RAID5; }
 raid5_10hdd_thresh_1000g()	{ thresh 1000 G 10 RAID5; }
+
+raid5_12hdd_thresh_1m()		{ thresh 1    M 12 RAID5; }
+raid5_12hdd_thresh_10m()	{ thresh 10   M 12 RAID5; }
+raid5_12hdd_thresh_100m()	{ thresh 100  M 12 RAID5; }
+raid5_12hdd_thresh_1000m()	{ thresh 1000 M 12 RAID5; }
+
+raid5_12hdd_thresh_1g()		{ thresh 1    G 12 RAID5; }
+raid5_12hdd_thresh_2g()		{ thresh 2    G 12 RAID5; }
+raid5_12hdd_thresh_4g()		{ thresh 4    G 12 RAID5; }
+raid5_12hdd_thresh_8g()		{ thresh 8    G 12 RAID5; }
+raid5_12hdd_thresh_10g()	{ thresh 10   G 12 RAID5; }
+raid5_12hdd_thresh_100g()	{ thresh 100  G 12 RAID5; }
+raid5_12hdd_thresh_1000g()	{ thresh 1000 G 12 RAID5; }
 
 mem() {
 	for i in $(</proc/cmdline)
