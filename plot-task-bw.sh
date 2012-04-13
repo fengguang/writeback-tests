@@ -1,5 +1,16 @@
 #!/bin/bash
 
+plot_lines() {
+	colors=(red gold web-blue cyan magenta slategray)
+	echo -n plot
+	for i in `seq 0 5`
+	do
+		[[ -f task-bw-${dd[$i]}$suffix ]] || break
+		[[ $i != 0 ]] && echo -n ,
+		echo -n \"task-bw-${dd[$i]}$suffix\" using '1:($3/1048576)' with steps lw 2.0 lc rgbcolor \"${colors[$i]}\"      title \"task ${dd[$i]}\"
+	done
+}
+
 plot() {
 suffix=$1
 gnuplot <<EOF
@@ -14,9 +25,8 @@ set grid
 
 set output "balance_dirty_pages-task-bw$suffix.png"
 set ylabel "dirtied (MB)"
-plot "task-bw-${dd[0]}$suffix" using 1:(\$3/1048576) with steps lw 2.0 lc rgbcolor "red"      title "task ${dd[0]}", \
-     "task-bw-${dd[1]}$suffix" using 1:(\$3/1048576) with steps lw 1.9 lc rgbcolor "gold"     title "task ${dd[1]}", \
-     "task-bw-${dd[2]}$suffix" using 1:(\$3/1048576) with steps lw 1.8 lc rgbcolor "web-blue" title "task ${dd[2]}"
+
+$(plot_lines)
 EOF
 }
 
@@ -42,7 +52,7 @@ trace_tab() {
 	    -e 's/[^0-9.-]\+/ /g'
 }
 
-for pid in ${dd[0]} ${dd[1]} ${dd[2]}
+for pid in ${dd[0]} ${dd[1]} ${dd[2]} ${dd[3]} ${dd[4]} ${dd[5]}
 do
 	# if ($paused == 0) dirtied += $dirtied
 	bzcat trace.bz2 | grep -F -- "-$pid " | trace_tab task_io > task-bw-$pid
@@ -53,6 +63,8 @@ if [[ -s task-bw-${dd[0]} ]]; then
 	plot
 	# plot -300
 fi
+
+rm task-bw-*
 
 cd ..
 done
