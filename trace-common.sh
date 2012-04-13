@@ -106,6 +106,7 @@ log_end() {
 	# cp /debug/tracing/trace trace
 	cp /proc/vmstat vmstat-end
 	cp /proc/slabinfo slabinfo-end
+	chmod go+r slabinfo-*
 	cat /proc/self/mountstats > mountstats-end
 	grep . /sys/block/sd?/bdi/writeback_stats  > writeback_stats
 	[ -s writeback_stats ] || rm writeback_stats
