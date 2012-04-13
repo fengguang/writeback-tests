@@ -284,8 +284,13 @@ xfs:xfs_discard_busy
 
 )
 
+./compare-io -g xfs "$@"
+./compare-wb -g xfs "$@"
+
 for e in ${XFS_EXPRESSIONS[*]}
 do
 	./compare -g xfs -e $e "$@"
 	echo
 done
+
+./compare-vm -g xfs "$@"
