@@ -125,7 +125,12 @@ opts = OptionParser.new do |opts|
 
 end
 
-opts.parse!(ARGV)
+if ARGV == []
+	argv = ["-h"]
+else
+	argv = ARGV
+end
+opts.parse!(argv)
 
 def iostat_cpu(path)
 	file = "#{path}/iostat-cpu"
