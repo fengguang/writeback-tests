@@ -132,7 +132,7 @@ def iostat_cpu(path)
 	eval "$#{$evaluate} = 0"
 	vars = $cpu_vars
 	vars.each { |var| eval "$cpu_#{var} = 0.0" }
-	return if not File.readable?(file)
+	return false if not File.readable?(file)
 	stat = File.new(file).readlines
 	stat.each_with_index do |line, i|
 		next if i < 3
@@ -140,6 +140,7 @@ def iostat_cpu(path)
 		vars.each_with_index { |var, i| eval "$cpu_#{var} += #{vals[i]}" }
 	end
 	vars.each { |var| eval "$cpu_#{var} /= #{stat.size-3}" }
+	return true
 end
 
 def iostat_disk(path)
@@ -147,7 +148,7 @@ def iostat_disk(path)
 	eval "$#{$evaluate} = 0"
 	vars = $io_vars
 	vars.each { |var| eval "$io_#{var} = 0.0" }
-	return if not File.readable?(file)
+	return false if not File.readable?(file)
 	stat = File.new(file).readlines
 	stat.each_with_index do |line, i|
 		next if i < 3
@@ -155,18 +156,20 @@ def iostat_disk(path)
 		vars.each_with_index { |var, i| eval "$io_#{var} += #{vals[i]}" if i > 0}
 	end
 	vars.each { |var| eval "$io_#{var} /= #{stat.size-3}" }
+	return true
 end
 
 def vmstat(path)
 	file = "#{path}/vmstat-end"
 	eval "$#{$evaluate} = 0"
-	return if not File.readable?(file)
+	return false if not File.readable?(file)
 
 	stat = File.new(file).readlines
 	stat.each do |line|
 		var, val = line.split
 		eval "$#{var} = #{val}"
 	end
+	return true
 end
 
 def nfs_stats(path)
@@ -187,7 +190,7 @@ def nfs_stats(path)
 	$nfs_commit_rtt_time = 0
 	$nfs_commit_execute_time = 0
 
-	return if not File.readable?(file)
+	return false if not File.readable?(file)
 
 	stat = File.new(file).readlines
 	nfsmnt = nil
@@ -218,6 +221,7 @@ def nfs_stats(path)
 			$nfs_commit_execute_time = n[8].to_f / $nfs_nr_commits
 		end
 	end
+	return true
 end
 
 def is_perf_event(name)
@@ -229,7 +233,7 @@ end
 def perf_stats(path)
 	$perf_event = {}
 	file = "#{path}/perf-stat"
-	return if not File.readable?(file)
+	return false if not File.readable?(file)
 
 	stat = File.new(file).readlines
 	stat.each do |line|
@@ -239,6 +243,7 @@ def perf_stats(path)
 		$perf_event[e] = v.to_i
 		# printf "#{e}=#{v}\n"
 	end
+	return true
 end
 
 def write_bw(path)
@@ -266,27 +271,24 @@ def add_dd(path)
 	$grep.each  { |re| return false if path !~ re }
 	$vgrep.each { |re| return false if path =~ re }
 
-	return false if File.exists?("#{path}/.live")
+	return if File.exists?("#{path}/.live")
 
 	if $evaluate == "write_bw"
 		bw = write_bw(path)
 		# puts path, bw
 		return if bw == 0
-	elsif $evaluate.index("nfs_") == 0
-		nfs_stats(path)
+	elsif $evaluate.index("nfs_") == 0 and nfs_stats(path)
 		eval "bw = $#{$evaluate}"
-	elsif $evaluate.index("cpu_") == 0
-		iostat_cpu(path)
+	elsif $evaluate.index("cpu_") == 0 and iostat_cpu(path)
 		eval "bw = $#{$evaluate}"
-	elsif $evaluate.index("io_") == 0
-		iostat_disk(path)
+	elsif $evaluate.index("io_") == 0 and iostat_disk(path)
 		eval "bw = $#{$evaluate}"
-	elsif is_perf_event($evaluate)
-		perf_stats(path)
+	elsif is_perf_event($evaluate) and perf_stats(path)
 		bw = $perf_event[$evaluate]
-	else
-		vmstat(path)
+	elsif vmstat(path)
 		eval "bw = $#{$evaluate}"
+	else
+		return
 	end
 	prefix = ""
 	if path =~ /(.*\/)(.*)/
