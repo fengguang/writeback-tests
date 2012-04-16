@@ -20,7 +20,7 @@ run_dd() {
 			mnt=$MNT/$(basename $dev)
 			rm -f $mnt/zero-$i
 			# ulimit -m $((i<<10))
-			dd bs=$bs if=/dev/zero of=$mnt/zero-$i &
+			dd $(echo $dd_opt | tr : ' ') if=/dev/zero of=$mnt/zero-$i &
 			echo $! >> pid
 			# sleep 5
 		done

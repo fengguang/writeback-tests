@@ -34,6 +34,11 @@ do
 	[[ $fs =~ nfs ]] && devices=$NFS_DEVICE
 	RAID_LEVEL=jbod
 
+	[[ $nr_dd =~ : ]] && {
+		dd_opt=$(echo $nr_dd | cut -f2- -d:)
+		nr_dd=$(echo $nr_dd | cut -f1 -d:)
+	}
+
 	cd $BASE_DIR
 
 	if [[ $scheme =~ ^fio_ && -f $scheme ]]; then

@@ -130,7 +130,7 @@ jbod_12hdd_fallocate_mmap_randwrite_64k()	{ jbod_12hdd randwrite	mmap	1	 64k;	}
 
 dd_job() {
 	job=${nr_dd}dd
-	[[ $bs != 4k ]] && job+=":bs=$bs"
+	[[ $dd_opt ]] && job+=":$dd_opt"
 	echo $job
 }
 
