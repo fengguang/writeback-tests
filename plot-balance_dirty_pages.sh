@@ -17,10 +17,11 @@ set grid
 
 set output "balance_dirty_pages-bandwidth$suffix.png"
 set ylabel "bandwidth (MB/s)"
-plot "$data-bw" using 1:(\$2/1024) with      points pt 5 ps 0.7 title "write bandwidth", \
-     "$data-bw" using 1:(\$3/1024) with lines lw 2 lc rgbcolor "gold" title "avg bandwidth", \
-     "$data-bw" using 1:(\$6/1024) with     points pt 7 ps 0.4 lc rgbcolor "greenyellow" title "task ratelimit", \
-     "$data-bw" using 1:(\$5/1024) with steps lw 2 lc rgbcolor "blue" title "dirty ratelimit"
+plot "$data-bw" using 1:(\$2/1024) with points pt 5 ps 0.7                           title "write bandwidth", \
+     "$data-bw" using 1:(\$3/1024) with  lines lw 2        lc rgbcolor "gold"        title "avg write bandwidth", \
+     "$data-bw" using 1:(\$7/1024) with points pt 1 ps 0.5 lc rgbcolor "blue"        title "balanced dirty ratelimit", \
+     "$data-bw" using 1:(\$5/1024) with  steps lw 2        lc rgbcolor "blue"        title "dirty ratelimit", \
+     "$data-bw" using 1:(\$6/1024) with points pt 7 ps 0.5 lc rgbcolor "greenyellow" title "task ratelimit"
      # "$data-bw" using 1:(\$8/1024) with   linespoints pt 3 ps 0.5 lc rgbcolor "sandybrown" title "dirty bandwidth", \
 
 unset grid
@@ -86,7 +87,7 @@ for dd in $(cat pid fio-pid more-pid 2>/dev/null)
 do
 	bzcat trace.bz2 |\
 		grep -- "-$dd \+\[" |\
-		grep -c1 -F balance_dirty_pages && break
+		grep -qc1 -F balance_dirty_pages && break
 done
 test $? = 0 || exit
 test "$dd" || exit
