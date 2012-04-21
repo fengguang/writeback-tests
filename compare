@@ -281,20 +281,25 @@ def add_dd(path)
 	if $evaluate == "write_bw"
 		bw = write_bw(path)
 		# puts path, bw
-		return if bw == 0
-	elsif $evaluate.index("nfs_") == 0 and nfs_stats(path)
+		valid = (bw != 0)
+	elsif $evaluate.index("nfs_") == 0
+		valid = nfs_stats(path)
 		eval "bw = $#{$evaluate}"
-	elsif $evaluate.index("cpu_") == 0 and iostat_cpu(path)
+	elsif $evaluate.index("cpu_") == 0
+		valid = iostat_cpu(path)
 		eval "bw = $#{$evaluate}"
-	elsif $evaluate.index("io_") == 0 and iostat_disk(path)
+	elsif $evaluate.index("io_") == 0
+		valid = iostat_disk(path)
 		eval "bw = $#{$evaluate}"
-	elsif is_perf_event($evaluate) and perf_stats(path)
+	elsif is_perf_event($evaluate)
+		valid = perf_stats(path)
 		bw = $perf_event[$evaluate]
-	elsif vmstat(path)
-		eval "bw = $#{$evaluate}"
 	else
-		return
+		valid = vmstat(path)
+		eval "bw = $#{$evaluate}"
 	end
+	return if not valid
+
 	prefix = ""
 	if path =~ /(.*\/)(.*)/
 		prefix = $1
