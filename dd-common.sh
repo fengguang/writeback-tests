@@ -20,6 +20,10 @@ run_fio() {
 }
 
 run_dd() {
+	local bs_opt
+	# dd defaults to bs=512 which could make it CPU bound
+	[[ dd_opt =~ 'bs=' ]] || bs_opt="bs=${bs:-64k}"
+
 	for i in `seq $nr_dd`
 	do
 		for dev in $bdevs
@@ -27,7 +31,7 @@ run_dd() {
 			mnt=$MNT/$(basename $dev)
 			rm -f $mnt/zero-$i
 			# ulimit -m $((i<<10))
-			dd $(echo $dd_opt | tr : ' ') if=/dev/zero of=$mnt/zero-$i &
+			dd $bs_opt $(echo $dd_opt | tr : ' ') if=/dev/zero of=$mnt/zero-$i &
 			echo $! >> pid
 			# sleep 5
 		done

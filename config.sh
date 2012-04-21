@@ -21,7 +21,7 @@ NFS_DEVICE=192.168.1.91:/nfs
 #
 # block size for dd
 #
-bs=4k
+bs=64k
 
 #
 # repeat each test so many times
