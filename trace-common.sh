@@ -111,7 +111,7 @@ log_end() {
 	grep . /sys/block/sd?/bdi/writeback_stats  > writeback_stats
 	[ -s writeback_stats ] || rm writeback_stats
 	[ -f /proc/lock_stat ] && cat /proc/lock_stat > lock_stat
-	[ -f sda.blktrace.0 ] && blkparse sda
+	[ -f sda.blktrace.0 ] && { blkparse sda > sda.blktrace; rm sda.blktrace.*; }
 	cp /proc/config.gz .
 	find $MNT -type f \( -name zero-* -o -name f? \) | xargs ls -li > ls-files
 	find $MNT -type f \( -name zero-* -o -name f? \) | xargs rm &
