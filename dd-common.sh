@@ -13,8 +13,8 @@ run_fio() {
 	sleep 1;   ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:48,comm >> ps
 	sleep 1;   ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:48,comm >> ps
 	sleep 1;   ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:48,comm >> ps
-	sleep 1;   echo w > /proc/sysrq-trigger
-	blktrace /dev/sda -w1
+	# echo w > /proc/sysrq-trigger
+	# blktrace /dev/sda -w1
 
 	wait $pid
 }
@@ -41,7 +41,8 @@ run_dd() {
 	sleep $((RUNTIME/5)); ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:48,comm >> ps
 	sleep $((RUNTIME/5)); ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:48,comm >> ps
 	sleep $((RUNTIME/5)); ps -eo pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:48,comm >> ps
-	sleep $((RUNTIME/5)); echo w > /proc/sysrq-trigger; blktrace /dev/sda -w1
+	sleep $((RUNTIME/5));
+	# echo w > /proc/sysrq-trigger; blktrace /dev/sda -w1
 }
 
 run_test() {
